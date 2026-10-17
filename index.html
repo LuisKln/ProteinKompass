@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Ein transparenter Proteinbedarfskalkulator für Jugendliche.">
+  <title>ProteinKompass – Proteinbedarf für Jugendliche</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <main class="shell">
+    <header class="hero">
+      <a class="brand" href="#top" aria-label="ProteinKompass Startseite"><span class="brand-mark">P</span><span>Protein<span>Kompass</span></span></a>
+      <p class="eyebrow">KoL-Projekt · transparent &amp; nachvollziehbar</p>
+      <h1>Dein Proteinbedarf.<br><em>Klar berechnet.</em></h1>
+      <p class="intro">Ein Lernwerkzeug für Jugendliche: Bedarf einschätzen, passende Lebensmittel entdecken und die Rechenwege verstehen.</p>
+      <p class="notice">Hinweis: Die Werte sind Orientierungswerte für gesunde Jugendliche und ersetzen keine medizinische oder ernährungsmedizinische Beratung.</p>
+    </header>
+
+    <nav class="tabs" aria-label="Bereiche">
+      <button class="tab active" data-tab="calculator">Rechner</button>
+      <button class="tab" data-tab="database">Lebensmitteldatenbank</button>
+      <button class="tab" data-tab="admin">Admin</button>
+    </nav>
+
+    <section class="panel tab-panel active" id="calculator" aria-labelledby="calculator-title">
+      <div class="section-heading"><div><p class="eyebrow">Schritt 1</p><h2 id="calculator-title">Angaben eingeben</h2></div><span class="status-dot">Bereit</span></div>
+      <form id="calculator-form" novalidate>
+        <div class="input-grid">
+          <label>Alter <span class="unit">Jahre</span><input id="age" name="age" type="number" min="10" max="19" value="15" required inputmode="numeric"></label>
+          <label>Körpergewicht <span class="unit">kg</span><input id="weight" name="weight" type="number" min="25" max="200" step="0.1" value="55" required inputmode="decimal"></label>
+          <label>Ernährungsform<select id="diet" name="diet"><option value="omnivore">Mischkost</option><option value="vegetarian">Vegetarisch</option><option value="vegan">Vegan</option></select></label>
+          <label>Sportliche Aktivität<select id="activity" name="activity"><option value="none">Kein zusätzlicher Sport</option><option value="light">Leicht · 1–2× pro Woche</option><option value="moderate" selected>Mittel · 3–4× pro Woche</option><option value="intense">Intensiv · 5× oder mehr</option></select></label>
+        </div>
+        <p class="form-error" id="form-error" role="alert"></p>
+        <button class="primary-button" type="submit">Proteinbedarf berechnen <span aria-hidden="true">→</span></button>
+      </form>
+
+      <div class="results" id="results" aria-live="polite">
+        <div class="result-main"><p>Dein Orientierungswert pro Tag</p><strong><span id="total-protein">0</span><small> g</small></strong><span id="result-summary">Bitte Angaben berechnen.</span></div>
+        <div class="result-breakdown"><div><span>Allgemeiner Bedarf</span><strong id="base-protein">0 g</strong><small id="base-detail">–</small></div><div><span>Zusatz durch Sport</span><strong id="sport-protein">0 g</strong><small id="sport-detail">–</small></div></div>
+      </div>
+      <div class="formula" id="formula">Rechenweg erscheint nach der Berechnung.</div>
+
+      <section class="suggestion-area" aria-labelledby="suggestion-title">
+        <div class="section-heading"><div><p class="eyebrow">Schritt 2</p><h2 id="suggestion-title">Passende Vorschläge</h2></div><span id="suggestion-diet-label" class="chip">Mischkost</span></div>
+        <p class="muted">Jede Karte zeigt eine rechnerisch passende Menge. Gerichte werden nur in ganzen Portionen und Stückware nur in ganzen Stückzahlen vorgeschlagen.</p>
+        <div class="suggestion-grid" id="suggestions"><p class="empty-state">Berechne zuerst deinen Bedarf.</p></div>
+      </section>
+    </section>
+
+    <section class="panel tab-panel" id="database" aria-labelledby="database-title">
+      <div class="section-heading"><div><p class="eyebrow">Lebensmittel</p><h2 id="database-title">Datenbank</h2></div><span id="food-count" class="chip">0 Einträge</span></div>
+      <div class="database-controls"><label class="search-label"><span class="sr-only">Lebensmittel suchen</span><input id="food-search" type="search" placeholder="Suchen, z. B. Haferflocken"></label><select id="database-diet-filter" aria-label="Ernährungsform filtern"><option value="all">Alle Ernährungsformen</option><option value="omnivore">Mischkost</option><option value="vegetarian">Vegetarisch</option><option value="vegan">Vegan</option></select><select id="category-filter" aria-label="Kategorie filtern"><option value="all">Alle Kategorien</option><option value="Einzellebensmittel">Einzellebensmittel</option><option value="Gericht">Gerichte</option></select></div>
+      <div class="food-list" id="food-list"></div>
+      <p class="source-note">Nährwerte: typische Werte je 100 g aus dem Bundeslebensmittelschlüssel (BLS), gerundet. Zusammengesetzte Gerichte sind nachvollziehbare Rezeptur-Schätzwerte. Details stehen bei jedem Eintrag.</p>
+    </section>
+
+    <section class="panel tab-panel" id="admin" aria-labelledby="admin-title">
+      <div class="section-heading"><div><p class="eyebrow">Lokal im Browser</p><h2 id="admin-title">Admin-Bereich</h2></div><button class="text-button" id="reset-data" type="button">Werkseinstellungen</button></div>
+      <p class="muted">Änderungen werden nur in diesem Browser gespeichert (localStorage). Für GitHub Pages ist kein Login nötig; veröffentlichte Standardwerte bearbeitest du in <code>app.js</code>.</p>
+      <div class="admin-layout">
+        <form id="food-form" class="admin-card"><h3 id="food-form-title">Lebensmittel hinzufügen</h3><input id="food-id" type="hidden"><div class="input-grid compact"><label>Name<input id="food-name" required maxlength="60"></label><label>Protein je 100 g<input id="food-protein" type="number" min="0.1" step="0.1" required></label><label>Portionsgröße (g)<input id="food-portion" type="number" min="1" step="1" required></label><label>Portionsart<select id="food-unit"><option value="g">Gramm</option><option value="portion">Portion</option><option value="piece">Stück</option></select></label><label>Kategorie<select id="food-category"><option>Einzellebensmittel</option><option>Gericht</option></select></label><label>Geeignet ab<select id="food-diet"><option value="omnivore">Mischkost</option><option value="vegetarian">Vegetarisch</option><option value="vegan">Vegan</option></select></label><label class="full-width">Quelle / Notiz<input id="food-source" required maxlength="140" placeholder="z. B. BLS 4.0, typischer Wert"></label></div><div class="admin-actions"><button class="primary-button" type="submit">Eintrag speichern</button><button class="secondary-button" id="cancel-edit" type="button" hidden>Abbrechen</button></div></form>
+        <form id="settings-form" class="admin-card"><h3>Berechnungsregeln</h3><p class="muted small">Grundbedarf in g/kg Körpergewicht. Die Sportwerte sind ein zusätzlicher, frei dokumentierbarer Orientierungswert.</p><div id="age-settings" class="settings-list"></div><h4>Sport-Zuschlag (g/kg)</h4><div id="activity-settings" class="settings-list"></div><button class="primary-button" type="submit">Regeln speichern</button></form>
+      </div>
+      <div class="admin-card"><h3>Gespeicherte Einträge</h3><div id="admin-food-list" class="food-list"></div></div>
+    </section>
+
+    <footer><p>ProteinKompass · Daten- und Rechenstand: Oktober 2026 · <a href="https://www.dge.de/wissenschaft/referenzwerte/protein/" target="_blank" rel="noreferrer">DGE-Referenzwerte</a> · <a href="https://www.mri.bund.de/de/institute/ernaehrungsverhalten/forschungsbereiche/bundeslebensmittelschluessel-bls/" target="_blank" rel="noreferrer">BLS / MRI</a></p></footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

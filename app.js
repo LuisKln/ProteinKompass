@@ -12,6 +12,12 @@ const defaultRules = {
     { id: "light", label: "Leicht · 1–2× pro Woche", factor: 0.05 },
     { id: "moderate", label: "Mittel · 3–4× pro Woche", factor: 0.10 },
     { id: "intense", label: "Intensiv · 5× oder mehr", factor: 0.20 }
+  ],
+  intensities: [
+    { id: "light", label: "Leicht", factor: 0 },
+    { id: "medium", label: "Mittel", factor: 0.05 },
+    { id: "hard", label: "Schwer", factor: 0.10 },
+    { id: "very-hard", label: "Sehr schwer", factor: 0.15 }
   ]
 };
 /* diet = niedrigste Ernährungsform, für die der Eintrag geeignet ist. */
@@ -43,7 +49,14 @@ const $ = (selector) => document.querySelector(selector);
 const round = (value, digits = 1) => Number(value.toFixed(digits));
 
 function loadState() {
-  try { const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)); if (saved?.foods && saved?.rules) return saved; } catch (_) { /* Startwerte verwenden */ }
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (saved?.foods && saved?.rules) {
+      /* Bestehende Browser-Daten bleiben nutzbar, auch nach einem App-Update. */
+      saved.rules.intensities ??= structuredClone(defaultRules.intensities);
+      return saved;
+    }
+  } catch (_) { /* Startwerte verwenden */ }
   return { foods: structuredClone(defaultFoods), rules: structuredClone(defaultRules) };
 }
 function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
@@ -53,21 +66,23 @@ function formatNumber(value) { return new Intl.NumberFormat("de-DE", { maximumFr
 
 function calculate(event) {
   event?.preventDefault();
-  const age = Number($("#age").value), weight = Number($("#weight").value), diet = $("#diet").value, activity = $("#activity").value;
+  const age = Number($("#age").value), weight = Number($("#weight").value), diet = $("#diet").value, activity = $("#activity").value, intensity = $("#intensity").value;
   const error = $("#form-error"); error.textContent = "";
   if (!Number.isFinite(age) || age < 10 || age > 19 || !Number.isFinite(weight) || weight < 25 || weight > 200) {
     error.textContent = "Bitte gib ein Alter von 10–19 Jahren und ein Gewicht von 25–200 kg ein."; return;
   }
   const ageRule = state.rules.ages.find(rule => age >= rule.min && age <= rule.max);
   const activityRule = state.rules.activities.find(rule => rule.id === activity);
-  const base = round(weight * ageRule.factor); const sport = round(weight * activityRule.factor); const total = round(base + sport);
-  lastCalculation = { age, weight, diet, activity, base, sport, total, ageRule, activityRule };
+  const intensityRule = state.rules.intensities.find(rule => rule.id === intensity);
+  const sportFactor = activity === "none" ? 0 : round(activityRule.factor + intensityRule.factor, 2);
+  const base = round(weight * ageRule.factor); const sport = round(weight * sportFactor); const total = round(base + sport);
+  lastCalculation = { age, weight, diet, activity, intensity, base, sport, total, ageRule, activityRule, intensityRule, sportFactor };
   $("#total-protein").textContent = formatNumber(total); $("#base-protein").textContent = `${formatNumber(base)} g`;
   $("#sport-protein").textContent = `${formatNumber(sport)} g`;
   $("#base-detail").textContent = `${formatNumber(ageRule.factor)} g/kg × ${formatNumber(weight)} kg`;
-  $("#sport-detail").textContent = `${formatNumber(activityRule.factor)} g/kg × ${formatNumber(weight)} kg`;
+  $("#sport-detail").textContent = activity === "none" ? "Kein zusätzlicher Sport" : `${formatNumber(activityRule.factor)} + ${formatNumber(intensityRule.factor)} g/kg × ${formatNumber(weight)} kg`;
   $("#result-summary").textContent = `${formatNumber(total / weight)} g Protein je kg Körpergewicht`;
-  $("#formula").textContent = `Rechenweg: (${formatNumber(weight)} kg × ${formatNumber(ageRule.factor)} g/kg) + (${formatNumber(weight)} kg × ${formatNumber(activityRule.factor)} g/kg) = ${formatNumber(total)} g/Tag.`;
+  $("#formula").textContent = `Rechenweg: (${formatNumber(weight)} kg × ${formatNumber(ageRule.factor)} g/kg) + (${formatNumber(weight)} kg × (${formatNumber(activityRule.factor)} + ${activity === "none" ? "0" : formatNumber(intensityRule.factor)} g/kg)) = ${formatNumber(total)} g/Tag.`;
   $("#suggestion-diet-label").textContent = dietText[diet]; renderSuggestions();
 }
 
@@ -104,6 +119,7 @@ function foodRow(food, admin = false) {
 function renderSettings() {
   $("#age-settings").innerHTML = state.rules.ages.map(rule => `<label class="setting-line"><span>${rule.label}</span><input data-age-rule="${rule.id}" type="number" min="0.1" max="3" step="0.01" value="${rule.factor}"><span class="sr-only">g/kg</span></label>`).join("");
   $("#activity-settings").innerHTML = state.rules.activities.map(rule => `<label class="setting-line"><span>${rule.label}</span><input data-activity-rule="${rule.id}" type="number" min="0" max="2" step="0.01" value="${rule.factor}"><span class="sr-only">g/kg</span></label>`).join("");
+  $("#intensity-settings").innerHTML = state.rules.intensities.map(rule => `<label class="setting-line"><span>${rule.label}</span><input data-intensity-rule="${rule.id}" type="number" min="0" max="2" step="0.01" value="${rule.factor}"><span class="sr-only">g/kg</span></label>`).join("");
 }
 function submitFood(event) {
   event.preventDefault();
@@ -116,7 +132,7 @@ function submitFood(event) {
 function editFood(id) { const food = state.foods.find(f => f.id === id); if (!food) return; $("#food-id").value=food.id; $("#food-name").value=food.name; $("#food-protein").value=food.protein; $("#food-portion").value=food.portion; $("#food-unit").value=food.unit; $("#food-category").value=food.category; $("#food-diet").value=food.diet; $("#food-source").value=food.source; $("#food-form-title").textContent=`„${food.name}“ bearbeiten`; $("#cancel-edit").hidden=false; $("#food-form").scrollIntoView({behavior:"smooth",block:"center"}); }
 function resetFoodForm() { $("#food-form").reset(); $("#food-id").value=""; $("#food-form-title").textContent="Lebensmittel hinzufügen"; $("#cancel-edit").hidden=true; }
 function deleteFood(id) { const food=state.foods.find(f=>f.id===id); if (!food || !confirm(`„${food.name}“ wirklich löschen?`)) return; state.foods=state.foods.filter(f=>f.id!==id); saveState(); renderFoods(); if(lastCalculation) renderSuggestions(); }
-function submitRules(event) { event.preventDefault(); state.rules.ages.forEach(rule=>rule.factor=Number(document.querySelector(`[data-age-rule="${rule.id}"]`).value)); state.rules.activities.forEach(rule=>rule.factor=Number(document.querySelector(`[data-activity-rule="${rule.id}"]`).value)); if ([...state.rules.ages,...state.rules.activities].some(r=>!Number.isFinite(r.factor)||r.factor<0)) return; saveState(); if(lastCalculation) calculate(); }
+function submitRules(event) { event.preventDefault(); state.rules.ages.forEach(rule=>rule.factor=Number(document.querySelector(`[data-age-rule="${rule.id}"]`).value)); state.rules.activities.forEach(rule=>rule.factor=Number(document.querySelector(`[data-activity-rule="${rule.id}"]`).value)); state.rules.intensities.forEach(rule=>rule.factor=Number(document.querySelector(`[data-intensity-rule="${rule.id}"]`).value)); if ([...state.rules.ages,...state.rules.activities,...state.rules.intensities].some(r=>!Number.isFinite(r.factor)||r.factor<0)) return; saveState(); if(lastCalculation) calculate(); }
 
 document.querySelectorAll(".tab").forEach(button => button.addEventListener("click", () => { document.querySelectorAll(".tab,.tab-panel").forEach(el=>el.classList.remove("active")); button.classList.add("active"); $(`#${button.dataset.tab}`).classList.add("active"); }));
 $("#calculator-form").addEventListener("submit", calculate); $("#food-form").addEventListener("submit", submitFood); $("#settings-form").addEventListener("submit", submitRules); $("#cancel-edit").addEventListener("click", resetFoodForm);

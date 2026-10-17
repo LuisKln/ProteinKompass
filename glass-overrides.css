@@ -1,0 +1,46 @@
+/* Zusätzliche Glass-Optik: bewusst getrennt, damit die Gestaltung leicht anpassbar bleibt. */
+:root {
+  --glass-shadow: 0 16px 40px rgba(3, 22, 61, .38), 0 3px 12px rgba(38, 105, 194, .15), inset 0 1px 0 rgba(220, 239, 255, .09);
+  --glass-shadow-soft: 0 9px 24px rgba(3, 22, 61, .28), inset 0 1px 0 rgba(220, 239, 255, .07);
+}
+
+/* Kompakte Navigation mit abgerundeten Enden statt einer vollen Seitenleiste. */
+.tabs {
+  width: fit-content;
+  max-width: 100%;
+  padding: 5px;
+  border: 1px solid rgba(126, 183, 255, .20);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(12, 29, 52, .92), rgba(5, 17, 32, .82));
+  box-shadow: var(--glass-shadow);
+}
+
+.tab {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 18px;
+}
+
+.tab.active {
+  border-color: transparent;
+  color: #f4fbff;
+  background: linear-gradient(135deg, rgba(54, 119, 208, .36), rgba(22, 66, 128, .36));
+  box-shadow: inset 0 1px 0 rgba(221, 242, 255, .18), 0 5px 14px rgba(10, 77, 167, .32);
+}
+
+/* Alle vorhandenen, abgerundeten Oberflächen erhalten dieselbe blaue Glas-Tiefe. */
+.panel, .suggestion-card, .food-row, .admin-card,
+input, select, .primary-button, .secondary-button, .icon-button,
+.status-dot, .chip, .brand-mark {
+  box-shadow: var(--glass-shadow-soft);
+}
+
+.panel { box-shadow: var(--glass-shadow); }
+.suggestion-card:hover, .food-row:hover { border-color: rgba(132, 182, 255, .35); box-shadow: var(--glass-shadow); }
+input:focus, select:focus { box-shadow: 0 0 0 3px rgba(132, 182, 255, .16), var(--glass-shadow-soft); }
+.primary-button { box-shadow: 0 10px 25px rgba(22, 133, 146, .24), inset 0 1px 0 rgba(236, 255, 250, .34); }
+
+@media (max-width: 720px) {
+  .tabs { width: 100%; overflow-x: auto; border-radius: 18px; }
+  .tab { flex: 1 0 auto; padding-inline: 14px; }
+}

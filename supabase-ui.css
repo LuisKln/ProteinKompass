@@ -1,0 +1,19 @@
+/* Status- und Layout-Ergänzungen für die getrennte Supabase-Verbindung. */
+.connection-status {
+  display: inline-block;
+  margin: 18px 0 0;
+  padding: 7px 11px;
+  border: 1px solid rgba(132, 182, 255, .22);
+  border-radius: 999px;
+  background: rgba(18, 48, 85, .42);
+  color: #b9d6ff;
+  font-size: .78rem;
+  box-shadow: var(--glass-shadow-soft, 0 8px 20px rgba(3, 22, 61, .28));
+}
+.connection-status.error { color: #ffb0b0; border-color: rgba(255, 142, 142, .35); }
+/* Der Login ist keine Registerkarte und bleibt deshalb immer sichtbar. */
+#login-panel { display: block; }
+.admin-content > .tabs { margin-top: 28px; }
+.admin-panel { display: none; }
+.admin-panel.active { display: block; }
+@media (max-width: 720px) { .connection-status { margin-top: 14px; } }

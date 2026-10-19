@@ -13,6 +13,7 @@
 .connection-status.error { color: #ffb0b0; border-color: rgba(255, 142, 142, .35); }
 /* Der Login ist keine Registerkarte und bleibt deshalb immer sichtbar. */
 #login-panel { display: block; }
+#set-password-panel:not([hidden]) { display: block; }
 .admin-content > .tabs { margin-top: 28px; }
 .admin-panel { display: none; }
 .admin-panel.active { display: block; }

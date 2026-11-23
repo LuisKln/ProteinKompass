@@ -39,6 +39,10 @@ input, select, .primary-button, .secondary-button, .icon-button,
 .suggestion-card:hover, .food-row:hover { border-color: rgba(132, 182, 255, .35); box-shadow: var(--glass-shadow); }
 input:focus, select:focus { box-shadow: 0 0 0 3px rgba(132, 182, 255, .16), var(--glass-shadow-soft); }
 .primary-button { box-shadow: 0 10px 25px rgba(22, 133, 146, .24), inset 0 1px 0 rgba(236, 255, 250, .34); }
+.calculation-formula { margin-top: 16px; padding: 18px; border: 1px solid rgba(132, 182, 255, .20); border-radius: 16px; background: rgba(9, 28, 50, .42); box-shadow: var(--glass-shadow-soft); }
+.calculation-formula .eyebrow { margin: 0 0 4px; }
+.calculation-formula h3 { margin: 0 0 7px; color: #cfe2ff; font-size: clamp(1.05rem, 3vw, 1.35rem); letter-spacing: -.03em; }
+.calculation-formula .formula { margin-top: 13px; }
 
 /* Das Werkzeug-Symbol bleibt erreichbar, ohne die Hauptnavigation zu überladen. */
 .hero { position: relative; }

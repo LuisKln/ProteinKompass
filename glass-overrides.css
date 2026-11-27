@@ -43,6 +43,22 @@ input:focus, select:focus { box-shadow: 0 0 0 3px rgba(132, 182, 255, .16), var(
 .calculation-formula .eyebrow { margin: 0 0 4px; }
 .calculation-formula h3 { margin: 0 0 7px; color: #cfe2ff; font-size: clamp(1.05rem, 3vw, 1.35rem); letter-spacing: -.03em; }
 .calculation-formula .formula { margin-top: 13px; }
+.gender-field { display: grid; gap: 7px; }
+.gender-switch { display: inline-flex; align-items: center; gap: 9px; color: #c6d3df; font-size: .86rem; font-weight: 650; }
+.gender-switch input { position: absolute; inline-size: 1px; block-size: 1px; opacity: 0; }
+.gender-track { position: relative; display: block; inline-size: 48px; block-size: 26px; border: 1px solid rgba(132, 182, 255, .30); border-radius: 999px; background: rgba(3, 12, 22, .74); box-shadow: var(--glass-shadow-soft); cursor: pointer; transition: .2s ease; }
+.gender-track::after { content: ""; position: absolute; inline-size: 18px; block-size: 18px; inset: 3px auto auto 3px; border-radius: 50%; background: #84b6ff; box-shadow: 0 2px 7px rgba(0,0,0,.32); transition: transform .2s ease; }
+.gender-switch input:checked + .gender-track { background: rgba(3, 12, 22, .94); border-color: rgba(132, 182, 255, .62); }
+.gender-switch input:checked + .gender-track::after { transform: translateX(22px); background: #84b6ff; }
+.gender-switch input:focus-visible + .gender-track { outline: 3px solid rgba(132, 182, 255, .34); outline-offset: 2px; }
+.tabs.is-stuck { background: rgba(3, 12, 22, .94); border-color: rgba(132, 182, 255, .40); box-shadow: 0 14px 42px rgba(3, 22, 61, .56); backdrop-filter: blur(36px) saturate(1.5); }
+.plan-summary { min-height: 1.2em; margin: 12px 0 0; color: #a9caff; font-size: .83rem; }
+.intensity-field { position: relative; color: #c6d3df; font-size: .86rem; font-weight: 650; }
+.field-label { display: inline-flex; align-items: center; gap: 7px; }
+.info-button { display: inline-grid; place-items: center; width: 18px; height: 18px; padding: 0; border: 1px solid rgba(132, 182, 255, .55); border-radius: 50%; background: rgba(15, 52, 96, .72); color: #cfe2ff; font: 750 .73rem/1 ui-sans-serif, system-ui, sans-serif; cursor: help; }
+.info-button:focus-visible { outline: 3px solid rgba(132, 182, 255, .35); outline-offset: 2px; }
+.intensity-tooltip { position: absolute; z-index: 5; top: 27px; left: 0; width: min(290px, calc(100vw - 64px)); padding: 11px 13px; border: 1px solid rgba(132, 182, 255, .35); border-radius: 12px; background: rgba(3, 12, 22, .97); color: #d9e9f9; box-shadow: var(--glass-shadow); font-size: .76rem; font-weight: 500; line-height: 1.55; opacity: 0; pointer-events: none; transform: translateY(-4px); transition: opacity .16s ease, transform .16s ease; }
+.info-button:hover + .intensity-tooltip, .info-button:focus-visible + .intensity-tooltip { opacity: 1; transform: translateY(0); }
 
 /* Das Werkzeug-Symbol bleibt erreichbar, ohne die Hauptnavigation zu überladen. */
 .hero { position: relative; }
